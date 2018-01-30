@@ -40,8 +40,8 @@ connection.on('registeredOracle', (oracleId) => {
 ...
 
 connection.on('response', (response) => {
-    console.log(`Client's response : ${response}`)
-    // "42"
+    console.log(`Client's response: ${response}`)
+    // "Client's response: 42"
 })
 
 ```
