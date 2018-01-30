@@ -31,13 +31,22 @@ connection.on('message', (message) => {
     console.log(`Websocket broadcasting: ${message}`)
 }
 
-...
+// ...
 
-connection.on('registeredOracle', (oracleId) => {
+var globalOracleId;
+
+connection.on('registeredOracle', (oracleId) => {   
+    globalOracleId = oracleId
     connection.query(oracleId, 4, 5, 5, 7, 'What is the purpose of life?')
 })
 
-...
+// ...
+
+if (globalOracleId) {
+    connection.query(oracleId, 4, 5, 5, 7, 'What is the purpose of life?')
+}
+
+// ...
 
 connection.on('response', (response) => {
     console.log(`Client's response: ${response}`)
