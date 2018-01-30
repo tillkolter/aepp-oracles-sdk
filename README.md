@@ -17,4 +17,4 @@ npm install aepp-oracles-sdk
 
 ## Examples
 
-Examples can be found under [src/examples](https://github.com/tillkolter/aepp-oracles-sdk/tree/master/src/examples).
+An example server implementation can be found under [src/examples](https://github.com/tillkolter/aepp-oracles-sdk/tree/master/src/examples).
