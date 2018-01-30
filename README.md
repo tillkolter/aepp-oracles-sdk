@@ -18,3 +18,30 @@ npm install aepp-oracles-sdk
 ## Examples
 
 An example server implementation can be found under [src/examples](https://github.com/tillkolter/aepp-oracles-sdk/tree/master/src/examples).
+
+Client-side
+
+```
+
+import OracleConnection from 'aepp-oracles-sdk'
+
+let connection = new OracleConnection(host, port, account)
+
+connection.on('message', (message) => {
+    console.log(`Websocket broadcasting: ${message}`)
+}
+
+...
+
+connection.on('registeredOracle', (oracleId) => {
+    connection.query(oracleId, 4, 5, 5, 7, 'What is the purpose of life?')
+})
+
+...
+
+connection.on('response', (response) => {
+    console.log(`Client's response : ${response}`)
+    // "42"
+})
+
+```
