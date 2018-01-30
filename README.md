@@ -6,8 +6,10 @@ Read [this](https://github.com/aeternity/protocol/blob/master/epoch/api/oracle_a
 
 ## Installation 
 
-The implementation is early stage, so packaging configuration should not be seen as final. 
-For development purposes the npm publishing configuration assembles only the browser compatible implementation.
+*The implementation is early stage, so packaging configuration should not be seen as final.*
+
+For development purposes the npm publishing configuration assembles only the browser compatible implementation. For the server side NodeJS integration please refer to the example section. 
+
 
 ```
 npm install aepp-oracles-sdk
