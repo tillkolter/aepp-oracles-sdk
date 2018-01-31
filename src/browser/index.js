@@ -14,6 +14,9 @@ class OracleConnection {
     this.webSocket.onopen = function (event) {
       this.em.emit ('open')
     }.bind (this)
+
+    let blockHeightInterval;
+
     this.webSocket.onmessage = function (message) {
       let data = message.data
       console.log (`===> DATA ${data}`)
@@ -23,16 +26,24 @@ class OracleConnection {
       let action = dataJson.action
       if (origin === 'oracle') {
         if (action === 'register') {
+          if (blockHeightInterval) {
+            clearInterval(blockHeightInterval)
+          }
           this.getBlockHeight().then(
             (startHeight) => {
-              var interval = setInterval(function () {
+              this.em.emit('newBlock', startHeight)
+              let lastHeight = startHeight
+              blockHeightInterval = setInterval(function () {
                 this.getBlockHeight().then(
                   function(height) {
-                    console.log('Checked block height ' + height + ' (started: ' + height);
-                    if (height > startHeight) {
-                      this.em.emit('registeredOracle', this.oracle.id);
-                      this.oracle.status = 'approved';
-                      clearInterval(interval);
+                    console.log('Checked block height ' + height + ' (started: ' + startHeight + ')');
+                    if (height > lastHeight) {
+                      this.em.emit('newBlock', height)
+                      if (this.oracle.status !== 'approved') {
+                        this.em.emit('registeredOracle', this.oracle.id);
+                        this.oracle.status = 'approved';
+                      }
+                      lastHeight = height
                     }
                   }.bind(this)
                 )
@@ -57,10 +68,13 @@ class OracleConnection {
         if (action === 'new_oracle_query') {
           this.em.emit ('newQuery', dataJson.payload)
         } else if (action === 'new_oracle_response') {
-          this.em.emit ('response', dataJson.payload.response)
+          this.em.emit ('response', dataJson.payload)
         }
       }
     }.bind (this)
+    this.webSocket.onclose = function () {
+      this.em.emit('close')
+    }.bind(this)
   }
 
 
@@ -206,7 +220,12 @@ class OracleConnection {
     const result = await axios.get(`http://${this.host}:${this.httpPort}/v2/top`)
     return result.data.height
   }
-
+  //
+  // getReadyState() {
+  //   if (this.webSocket) {
+  //     return this.webSocket.readyState
+  //   }
+  // }
 
 }
 

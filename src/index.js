@@ -38,7 +38,7 @@ class OracleConnection {
               var interval = setInterval (function () {
                 this.getBlockHeight ().then (
                   function (height) {
-                    console.log ('Checked block height ' + height + ' (started: ' + height)
+                    console.log (`Checked block height ${height} (started: ${height}`)
                     if (height > startHeight) {
                       this.em.emit ('registeredOracle', oracleId)
                       clearInterval (interval)
