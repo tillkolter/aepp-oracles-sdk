@@ -82,10 +82,9 @@ class OracleConnection {
    * @param queryFee regular costs to post a query
    * @param ttl relative number of blocks before a query is dropped
    * @param fee the fee to register the oracle
-   * @param callback function that is called when the registration is successful
    */
-  register(queryFormat, responseFormat, queryFee, ttl, fee, callback) {
-    this.webSocket.send (JSON.stringify ({
+  register(queryFormat, responseFormat, queryFee, ttl, fee) {
+    let data = {
       'target': 'oracle',
       'action': 'register',
       'payload': {
@@ -98,12 +97,13 @@ class OracleConnection {
         'ttl': {'type': 'delta', 'value': ttl},
         'fee': fee
       }
-    }), function ack(error) {
+    }
+    this.webSocket.send (JSON.stringify (data), function ack(error) {
       if (error) {
         console.error (error)
       }
     }.bind (this))
-    this.registerCallback = callback
+    return data
   }
 
 
@@ -123,6 +123,7 @@ class OracleConnection {
       }
     }
     this.webSocket.send (JSON.stringify (data))
+    return data
   }
 
   /**
@@ -134,7 +135,6 @@ class OracleConnection {
    * @param responseTtl relative number of blocks before the response dies
    * @param fee transaction fee
    * @param query the query
-   * @param callback success callback
    */
   query(oracleId, queryFee, queryTtl, responseTtl, fee, query) {
     // if (this.oracle) {
@@ -153,13 +153,13 @@ class OracleConnection {
       }
     }
     this.webSocket.send (JSON.stringify (data))
+    return data
   }
 
   /**
    * Subscribe to the event when the query gets answered
    *
    * @param queryId
-   * @param callback success callback
    */
   subscribeQuery(queryId) {
     let data = {
@@ -171,6 +171,7 @@ class OracleConnection {
       }
     }
     this.webSocket.send (JSON.stringify (data))
+    return data
   }
 
   /**
@@ -193,6 +194,7 @@ class OracleConnection {
       }
     }
     this.webSocket.send (JSON.stringify (data))
+    return data
   }
 
   on(message, callback) {
