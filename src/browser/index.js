@@ -19,7 +19,6 @@ class OracleConnection {
 
     this.webSocket.onmessage = function (message) {
       let data = message.data
-      console.log (`===> DATA ${data}`)
       let dataJson = JSON.parse (data)
       this.em.emit('message', data)
       let origin = dataJson.origin
@@ -36,7 +35,6 @@ class OracleConnection {
               blockHeightInterval = setInterval(function () {
                 this.getBlockHeight().then(
                   function(height) {
-                    console.log('Checked block height ' + height + ' (started: ' + startHeight + ')');
                     if (height > lastHeight) {
                       this.em.emit('newBlock', height)
                       if (this.oracle.status !== 'approved') {
@@ -50,10 +48,7 @@ class OracleConnection {
               }.bind(this), 1000);
             }
           );
-          console.log('register send successful');
 
-          //
-          //
           const oracleId = dataJson.payload['oracle_id']
           this.oracle = {
             id: oracleId,
@@ -106,18 +101,6 @@ class OracleConnection {
     }), function ack(error) {
       if (error) {
         console.error (error)
-      } else {
-        let startHeight = getBlockHeight()
-        let interval = setInterval(function () {
-          let height = getBlockHeight()
-          console.log(`Checked block height ${height} (started: ${height}`)
-          if (height > startHeight) {
-            this.em.emit ('registeredOracle', this.oracle.id)
-            this.oracle.status = 'approved'
-            clearInterval(interval)
-          }
-        }, 1000)
-        console.log ('register send successful')
       }
     }.bind (this))
     this.registerCallback = callback
@@ -166,7 +149,7 @@ class OracleConnection {
         'query_ttl': {'type': 'delta', 'value': queryTtl},
         'response_ttl': {'type': 'delta', 'value': responseTtl},
         'fee': fee,
-        'query': query
+        'query': typeof query.toString !== 'undefined' ? query.toString(): query
       }
     }
     this.webSocket.send (JSON.stringify (data))

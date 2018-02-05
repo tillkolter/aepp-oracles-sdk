@@ -20,7 +20,6 @@ class OracleConnection {
     }.bind (this))
 
     this.webSocket.on ('message', function incoming(data) {
-      console.log (`===> DATA ${data}`)
       let dataJson = JSON.parse (data)
       let origin = dataJson.origin
       let action = dataJson.action
@@ -38,7 +37,6 @@ class OracleConnection {
               var interval = setInterval (function () {
                 this.getBlockHeight ().then (
                   function (height) {
-                    console.log (`Checked block height ${height} (started: ${height}`)
                     if (height > startHeight) {
                       this.em.emit ('registeredOracle', oracleId)
                       clearInterval (interval)
@@ -140,7 +138,7 @@ class OracleConnection {
         'query_ttl': {'type': 'delta', 'value': queryTtl},
         'response_ttl': {'type': 'delta', 'value': responseTtl},
         'fee': fee,
-        'query': query
+        'query': toString(query)
       }
     }
     this.webSocket.send (JSON.stringify (data))
